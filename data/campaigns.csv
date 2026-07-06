@@ -1,0 +1,14 @@
+campaign_id,campaign_name,product_category,start_date,end_date,incentive_type,agent_id,agent_progress_pct
+C01,Shield Rider Wealth Push,Shield,2026-06-01,2026-07-15,Cash bonus,A001,19
+C03,Retirement Season Sprint,Retirement,2026-06-01,2026-07-31,Trip qualifier,A002,14
+C03,Retirement Season Sprint,Retirement,2026-06-01,2026-07-31,Trip qualifier,A003,65
+C01,Shield Rider Wealth Push,Shield,2026-06-01,2026-07-15,Cash bonus,A003,26
+C02,New Agent Ramp Bonus,Protection,2026-06-15,2026-08-01,Recognition,A004,56
+C02,New Agent Ramp Bonus,Protection,2026-06-15,2026-08-01,Recognition,A005,36
+C03,Retirement Season Sprint,Retirement,2026-06-01,2026-07-31,Trip qualifier,A006,23
+C03,Retirement Season Sprint,Retirement,2026-06-01,2026-07-31,Trip qualifier,A007,89
+C02,New Agent Ramp Bonus,Protection,2026-06-15,2026-08-01,Recognition,A007,29
+C01,Shield Rider Wealth Push,Shield,2026-06-01,2026-07-15,Cash bonus,A008,32
+C01,Shield Rider Wealth Push,Shield,2026-06-01,2026-07-15,Cash bonus,A009,52
+C03,Retirement Season Sprint,Retirement,2026-06-01,2026-07-31,Trip qualifier,A009,62
+C02,New Agent Ramp Bonus,Protection,2026-06-15,2026-08-01,Recognition,A010,30
