@@ -10,7 +10,7 @@ clones of any real person. See README.md for why this distinction matters.
 PERSONA_VOICE_IDS = {
     "Rom":    "FXMPPfJPpDj0GSwJ6ASO",
     "Ben":    "mbL34QDB5FptPamlgvX5",   # <- set this to the one that supports Mandarin
-    "SanSan": "Y7xQSS5ZtS4xv4VJotWd",
+    "SanSan": "eL7xfWghif0oJwtmX2qs",
 }
 
 # Which persona voice actually supports Mandarin well (only one of the three does).

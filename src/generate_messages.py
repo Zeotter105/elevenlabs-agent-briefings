@@ -15,6 +15,8 @@ import csv
 import json
 import os
 from collections import defaultdict
+from datetime import date, timedelta
+from statistics import mean
 from dotenv import load_dotenv
 from anthropic import Anthropic
 from config import PERSONA_TONE_NOTES
@@ -24,6 +26,7 @@ load_dotenv()
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 DATA_DIR = "../data"
+STALE_AFTER_DAYS = 7  # a lead is "stale" if not contacted in over a week
 
 
 def load_csv(name):
@@ -31,12 +34,30 @@ def load_csv(name):
         return list(csv.DictReader(f))
 
 
+def derive_trend(agent_production):
+    """Compute an agent's trend from their production history — an insight derived
+    from facts, not a stored field. Compares latest month's avg vs-target % to the
+    average of the prior months."""
+    by_month = defaultdict(list)
+    for r in agent_production:
+        by_month[r["month"]].append(int(r["vs_target_pct"]))
+    if len(by_month) < 2:
+        return "flat"
+    months_sorted = sorted(by_month)
+    latest = mean(by_month[months_sorted[-1]])
+    prior = mean(v for m in months_sorted[:-1] for v in by_month[m])
+    if latest - prior >= 8:
+        return "improving"
+    if prior - latest >= 8:
+        return "declining"
+    return "flat"
+
+
 def build_agent_context():
     agents = load_csv("agents.csv")
     leads = load_csv("leads.csv")
     production = load_csv("production.csv")
     campaigns = load_csv("campaigns.csv")
-    trends = {r["agent_id"]: r["trend"] for r in load_csv("agent_trends.csv")}
     weekly_assignment = {r["agent_id"]: r["assigned_exec"] for r in load_csv("weekly_assignment.csv")}
 
     leads_by_agent = defaultdict(list)
@@ -47,17 +68,28 @@ def build_agent_context():
     for c in campaigns:
         campaigns_by_agent[c["agent_id"]].append(c)
 
-    # latest month production per agent/product
+    prod_all_by_agent = defaultdict(list)
+    for r in production:
+        prod_all_by_agent[r["agent_id"]].append(r)
+
+    # latest month production per agent/product (for the snapshot shown to the LLM)
     latest_month = max(r["month"] for r in production)
     prod_latest = [r for r in production if r["month"] == latest_month]
     prod_by_agent = defaultdict(list)
     for r in prod_latest:
         prod_by_agent[r["agent_id"]].append(r)
 
+    stale_cutoff = date.today() - timedelta(days=STALE_AFTER_DAYS)
+
     contexts = []
     for a in agents:
         aid = a["agent_id"]
-        stale_leads = [l for l in leads_by_agent[aid] if l["lead_stage"] != "Closing"]
+        # a lead is stale if it's still open (not Closing) AND hasn't been contacted recently
+        stale_leads = [
+            l for l in leads_by_agent[aid]
+            if l["lead_stage"] != "Closing"
+            and date.fromisoformat(l["last_contact_date"]) < stale_cutoff
+        ]
         top_campaign = max(campaigns_by_agent[aid], key=lambda c: 100 - int(c["agent_progress_pct"]), default=None)
         contexts.append({
             "agent_id": aid,
@@ -66,8 +98,9 @@ def build_agent_context():
             "channel": a["channel"],
             "tenure_months": a["tenure_months"],
             "assigned_exec": weekly_assignment[aid],
-            "trend": trends[aid],
+            "trend": derive_trend(prod_all_by_agent[aid]),
             "open_leads_count": len(leads_by_agent[aid]),
+            "stale_leads_count": len(stale_leads),
             "stale_lead_products": list({l["product_category"] for l in stale_leads}),
             "production_snapshot": prod_by_agent[aid],
             "top_campaign": top_campaign,
@@ -88,8 +121,9 @@ def build_prompt(ctx):
                           f"threshold (product: {c['product_category']}, ends {c['end_date']}, "
                           f"incentive: {c['incentive_type']}).")
 
-    stale_line = (f"They have open/stale leads in: {', '.join(ctx['stale_lead_products'])}."
-                  if ctx["stale_lead_products"] else "They have no notably stale leads right now.")
+    stale_line = (f"They have {ctx['stale_leads_count']} stale lead(s) — open leads not contacted in over "
+                  f"{STALE_AFTER_DAYS} days — in: {', '.join(ctx['stale_lead_products'])}."
+                  if ctx["stale_lead_products"] else "They have no stale leads right now — pipeline hygiene is good.")
 
     return f"""You are writing a short spoken script for {persona} ({tone_note}).
 
@@ -132,8 +166,10 @@ def generate_all_messages():
         })
         print(f"Generated script for {ctx['agent_name']} ({ctx['assigned_exec']}, {ctx['language']})")
 
-    with open(f"{DATA_DIR}/messages.json", "w") as f:
-        json.dump(results, f, ensure_ascii=False, indent=2)
+        # save incrementally so a mid-run failure (network, rate limit) doesn't lose progress
+        with open(f"{DATA_DIR}/messages.json", "w") as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+
     print(f"\nSaved {len(results)} scripts to {DATA_DIR}/messages.json")
 
 

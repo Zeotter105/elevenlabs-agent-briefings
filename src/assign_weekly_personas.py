@@ -15,13 +15,20 @@ a random pick across all three, each week.
 
 import csv
 import random
+from datetime import date
 from config import MANDARIN_CAPABLE_PERSONA
 
 PERSONAS = ["Rom", "Ben", "SanSan"]
 DATA_DIR = "../data"
 
 
-def assign_weekly_personas(week_label="2026-W27"):
+def current_week_label():
+    iso = date.today().isocalendar()
+    return f"{iso.year}-W{iso.week:02d}"
+
+
+def assign_weekly_personas(week_label=None):
+    week_label = week_label or current_week_label()
     with open(f"{DATA_DIR}/agents.csv") as f:
         agents = list(csv.DictReader(f))
 

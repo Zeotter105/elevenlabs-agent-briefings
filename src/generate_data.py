@@ -25,7 +25,7 @@ CHANNELS = ["Agency", "Bancassurance"]
 PERSONAS = ["Rom", "Ben", "SanSan"]  # ElevenLabs pre-built voices, named as a fun weekly device.
                                      # These are NOT clones of any real individual's voice.
 
-TODAY = date(2026, 7, 6)
+TODAY = date.today()  # data is generated relative to the day you run this
 
 
 def random_date(days_back_min, days_back_max):
@@ -85,7 +85,13 @@ with open(f"{OUT_DIR}/leads.csv", "w", newline="") as f:
 
 # ---------- Table 3: production.csv ----------
 production = []
-months = ["2026-05", "2026-06", "2026-07"]
+# last 3 months including the current one, derived from TODAY
+def month_label(d):
+    return f"{d.year}-{d.month:02d}"
+m0 = TODAY.replace(day=1)
+m1 = (m0 - timedelta(days=1)).replace(day=1)
+m2 = (m1 - timedelta(days=1)).replace(day=1)
+months = [month_label(m2), month_label(m1), month_label(m0)]
 for a in agents:
     # give each agent a "trend" so messages can be genuinely differentiated
     trend = random.choice(["declining", "flat", "improving"])
@@ -106,7 +112,7 @@ for a in agents:
                 "case_value": random.choice([4000, 9000, 14000, 22000]),
                 "vs_target_pct": pct,
             })
-    a["_trend"] = trend  # stash for message logic later (not written to agents.csv)
+
 
 with open(f"{OUT_DIR}/production.csv", "w", newline="") as f:
     writer = csv.DictWriter(f, fieldnames=["agent_id", "month", "product_category", "cases_closed",
@@ -144,10 +150,8 @@ with open(f"{OUT_DIR}/campaigns.csv", "w", newline="") as f:
     writer.writerows(campaigns_rows)
 
 
-# ---------- Store trend separately since it's a derived/demo-only signal ----------
-with open(f"{OUT_DIR}/agent_trends.csv", "w", newline="") as f:
-    writer = csv.DictWriter(f, fieldnames=["agent_id", "trend"])
-    writer.writeheader()
-    writer.writerows([{"agent_id": a["agent_id"], "trend": a["_trend"]} for a in agents])
+# NOTE: trend is deliberately NOT written to any file. It's an insight, not a fact —
+# generate_messages.py derives it from production.csv (latest month vs. prior months),
+# the same way a real pipeline would compute it rather than store it.
 
-print("Generated: agents.csv, leads.csv, production.csv, campaigns.csv, agent_trends.csv in", OUT_DIR)
+print("Generated: agents.csv, leads.csv, production.csv, campaigns.csv in", OUT_DIR)

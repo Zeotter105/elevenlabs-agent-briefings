@@ -1,6 +1,6 @@
 # Weekly Agent Voice Briefings prototype with ElevenLabs 
 
-A prototype exploring how voice AI could personalize a recurring motivational message to our sellers:
+A prototype exploring how voice AI could personalise a recurring motivational message to our sellers:
  getting the right nudge, in the right tone, to the right distribution agent, every week.
 
 ## The problem
@@ -60,6 +60,10 @@ trends (declining/flat/improving), different personas, different languages.
 ## Why I built this
 
 For fun! To practice building apps and getting familiar with ElevenLabs. Turns out that it might be actually useful.
+
+## Rough economics at scale
+
+A 60–90 second briefing is ~1,200–1,500 characters. At ElevenLabs' business-tier rates, that's roughly a few cents per agent per week — on the order of US$8–15k/year for a 5,000-seller force, fully personalized, every week. Compare that against the current alternative: a Biz Dev team manually man-marking and messaging sellers one by one on WhatsApp, which covers only a fraction of the force, days late. The cost of the automated version is a rounding error against one headcount — the real question isn't cost, it's whether personalized voice outperforms generic text on activation, which is exactly what a 200-agent pilot would measure
 
 ## Setup
 
