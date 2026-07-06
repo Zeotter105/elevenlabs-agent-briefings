@@ -1,23 +1,23 @@
-# Weekly Agent Voice Briefings — an ElevenLabs prototype
+# Weekly Agent Voice Briefings prototype with ElevenLabs 
 
-A prototype exploring how voice AI could personalize a recurring operational touchpoint I run
-today by hand: getting the right nudge, in the right tone, to the right distribution agent, every week.
+A prototype exploring how voice AI could personalize a recurring motivational message to our sellers:
+ getting the right nudge, in the right tone, to the right distribution agent, every week.
 
 ## The problem
 
-At Prudential Singapore, I run a bi-weekly commercial forum that turns seller-push and customer-pull
-signals into a strategy memo for the CDO, CEO, and CFO. That memo is precise and well-targeted — but
-it's built for leadership, not for the 6,000+ agents whose day-to-day behavior actually moves the number.
-Agents get generic, one-size-fits-all campaign comms. The information that *should* reach them —
-"you have 3 stale Shield leads and the campaign closes in 4 days" — usually doesn't, or arrives too
-generic to act on.
+Each agent/banker has different self-imposed targets, different customer base, and sell different product line.
+It is currently difficult for us to effectively broadcast the company's priorities in a relatable and actionable way.
+The Biz Dev Team will design a "man-mark" list based on general criteria and then reach out to the sellers one by one on WhatsApp. 
+There are more than 5,000 sellers making this outreach exercise difficult, incomplete and not timely.
+The information that *should* reach them, "you have 3 stale Shield leads and the campaign closes in 4 days", usually doesn't, or arrives too
+generic to act on. 
 
 ## The idea
 
 A short (60-90 second) personalized weekly voice briefing per agent, generated from their own pipeline,
-production trend, and live campaign eligibility — delivered in their language, in the voice of one of
-three senior leaders, randomly assigned each week. The randomization is a small, deliberate product
-choice: agents don't know whether Rom, Ben, or SanSan will be "speaking" to them this week, which makes
+production trend, and live campaign eligibility, delivered in their language, in the voice of one of
+three senior leaders (Chief Executive Officer, Chief Distribution Officer or Chief Agency Officer), randomly assigned each week. 
+The randomization is a small, deliberate product choice: agents don't know whether Rom, Ben, or SanSan will be "speaking" to them this week, which makes
 a routine operational nudge something they might actually look forward to.
 
 **Important note on the voices:** "Rom," "Ben," and "SanSan" are pre-built ElevenLabs library voices,
@@ -40,8 +40,7 @@ even though it costs a little of the "wow" factor of the real thing.
 - **A real localization constraint I hit and had to design around**: of the three ElevenLabs voices
   I picked, only one performs well in Mandarin. Rather than force a bad-quality Mandarin voice on
   agents who need it, Mandarin-speaking agents are always routed to the Mandarin-capable persona,
-  while English-speaking agents get the full random rotation. Small decision, but it's the kind of
-  thing that only shows up once you actually build something instead of just describing it.
+  while English-speaking agents get the full random rotation. 
 
 ## Sample outputs
 
@@ -53,17 +52,14 @@ trends (declining/flat/improving), different personas, different languages.
 - **Delivery via WhatsApp** rather than a manually-played file, so briefings land where agents already
   are.
 - **Extending the same mechanic upward**: a GM's weekly written update to a regional team, turned into
-  a short multilingual voice briefing pushed to the team — the same "operating rhythm on voice" idea,
+  a short multilingual voice briefing pushed to the team: the same "operating rhythm on voice" idea,
   aimed at leadership coordination rather than agent activation.
-- **Agent voice-note replies flowing back up** — closing the loop so the operating rhythm runs in both
+- **Agent voice-note replies flowing back up**: closing the loop so the operating rhythm runs in both
   directions.
 
 ## Why I built this
 
-I'm exploring the Chief of Staff, APAC role at ElevenLabs, and I didn't want to apply on enthusiasm
-alone. This is a genuine (if small) attempt to think the way I'd want to think in that role: start
-from a real operating problem I already own, and ask what ElevenLabs' actual product stack would
-change about it.
+For fun! To practice building apps and getting familiar with ElevenLabs. Turns out that it might be actually useful.
 
 ## Setup
 
